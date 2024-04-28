@@ -1,0 +1,53 @@
+create database byd_infoservices;
+show databases;
+use byd_infoservices;
+CREATE TABLE proyectos (
+    id INT AUTO_INCREMENT primary key,
+    nombre VARCHAR(255) NOT NULL,
+    descripcion TEXT,
+    fecha_inicio DATE,
+    fecha_fin DATE,
+    cliente_id INT,
+    FOREIGN KEY (cliente_id) REFERENCES clientes(id)
+);
+CREATE TABLE tareas (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    nombre VARCHAR(255) NOT NULL,
+    descripcion TEXT,
+    estado ENUM('Pendiente', 'En Progreso', 'Completada') NOT NULL,
+    fecha_inicio DATE,
+    fecha_fin DATE,
+    proyecto_id INT,
+    FOREIGN KEY (proyecto_id) REFERENCES proyectos(id)
+);
+
+CREATE TABLE usuarios (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    nombre VARCHAR(100) NOT NULL,
+    email VARCHAR(255) NOT NULL UNIQUE,
+    cargo VARCHAR(100)
+);
+
+CREATE TABLE proyectos_usuarios (
+    proyecto_id INT,
+    usuario_id INT,
+    PRIMARY KEY (proyecto_id, usuario_id),
+    FOREIGN KEY (proyecto_id) REFERENCES proyectos(id),
+    FOREIGN KEY (usuario_id) REFERENCES usuarios(id)
+);
+
+CREATE TABLE clientes (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    nombre VARCHAR(255) NOT NULL,
+    contacto VARCHAR(255),
+    telefono VARCHAR(20),
+    email VARCHAR(255)
+);
+
+CREATE TABLE comentarios (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    contenido TEXT,
+    fecha_creacion DATETIME DEFAULT CURRENT_TIMESTAMP,
+    tarea_id INT,
+    FOREIGN KEY (tarea_id) REFERENCES tareas(id)
+);
