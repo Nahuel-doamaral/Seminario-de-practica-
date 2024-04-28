@@ -1,0 +1,49 @@
+import java.sql.*;
+
+public class BD_INFOSERVICES {
+    public static void main(String[] args) {
+        // Establecer la conexión a la base de datos
+        try (Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/byd_infoservices", "root", "NAHUEL2003")) {
+            System.out.println("Conexión exitosa a la base de datos.");
+
+            // Insertar un nuevo proyecto
+            insertarProyecto(connection, "Nuevo Proyecto", "Descripción del proyecto", "2024-04-30", "2024-05-30");
+
+            // Obtener y mostrar todos los proyectos
+            System.out.println("Proyectos existentes:");
+            obtenerProyectos(connection);
+        } catch (SQLException e) {
+            System.err.println("Error al conectar a la base de datos: " + e.getMessage());
+        }
+    }
+
+    // Método para insertar un nuevo proyecto en la base de datos
+    private static void insertarProyecto(Connection connection, String nombre, String descripcion, String fechaInicio, String fechaFin) throws SQLException {
+        String sql = "INSERT INTO proyectos (nombre, descripcion, fecha_inicio, fecha_fin) VALUES (?, ?, ?, ?)";
+        try (PreparedStatement statement = connection.prepareStatement(sql)) {
+            statement.setString(1, nombre);
+            statement.setString(2, descripcion);
+            statement.setString(3, fechaInicio);
+            statement.setString(4, fechaFin);
+            statement.executeUpdate();
+            System.out.println("Proyecto insertado correctamente.");
+        }
+    }
+
+    // Método para obtener y mostrar todos los proyectos de la base de datos
+    private static void obtenerProyectos(Connection connection) throws SQLException {
+        String sql = "SELECT * FROM proyectos";
+        try (Statement statement = connection.createStatement();
+             ResultSet resultSet = statement.executeQuery(sql)) {
+            while (resultSet.next()) {
+                int id = resultSet.getInt("id");
+                String nombre = resultSet.getString("nombre");
+                String descripcion = resultSet.getString("descripcion");
+                String fechaInicio = resultSet.getString("fecha_inicio");
+                String fechaFin = resultSet.getString("fecha_fin");
+                System.out.println("ID: " + id + ", Nombre: " + nombre + ", Descripción: " + descripcion +
+                        ", Fecha de inicio: " + fechaInicio + ", Fecha de fin: " + fechaFin);
+            }
+        }
+    }
+}
